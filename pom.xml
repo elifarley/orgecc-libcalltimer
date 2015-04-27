@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.orgecc</groupId>
+    <artifactId>orgecc-root</artifactId>
+    <version>default-SNAPSHOT</version>
+  </parent>
+
+  <groupId>com.orgecc.lib</groupId>
+  <artifactId>orgecc-libcalltimer</artifactId>
+  <version>default-SNAPSHOT</version>
+  <name>[libct] Call Timer</name>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <dependency>
+          <groupId>com.orgecc</groupId>
+          <artifactId>orgecc-dep-pom</artifactId>
+          <version>default-SNAPSHOT</version>
+          <type>pom</type>
+          <scope>import</scope>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+  </dependencies>
+
+
+  <developers>
+    <developer>
+      <id>elifarley.cruz</id>
+      <name>Elifarley Cruz</name>
+      <email>elifarley@gmail.com</email>
+    </developer>
+  </developers>
+
+</project>
