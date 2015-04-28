@@ -2,7 +2,7 @@
 
 Usage example:
 ```Java
-CallTimer timer = this.sessionInfo.getTimer().callStart();
+CallTimer timer = CallTimerFactory.newSLF4JCallTimer().callStart();
 
 // [...find out className, methodName and paramCount...]
 
