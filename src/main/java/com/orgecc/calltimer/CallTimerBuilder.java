@@ -7,6 +7,10 @@ public final class CallTimerBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger( CallTimer.class );
 
+    static {
+        BaseCallTimer.saveHeader( LOGGER );
+    }
+
     private Ticker ticker;
 
     private Logger logger;

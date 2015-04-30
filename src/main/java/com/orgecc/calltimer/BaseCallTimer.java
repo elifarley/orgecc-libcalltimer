@@ -14,7 +14,7 @@ class BaseCallTimer implements CallTimer {
 
     private static final String MSG_FORMAT = "%s\t%s\t%s\t%s\t%s\t%s";
 
-    private static Logger saveHeader( final Logger logger ) {
+    static Logger saveHeader( final Logger logger ) {
         logger.warn( HEADER );
         return logger;
     }
@@ -45,7 +45,7 @@ class BaseCallTimer implements CallTimer {
 
     BaseCallTimer( final Ticker ticker, final Logger logger ) {
         this.ticker = ticker;
-        this.logger = saveHeader( logger );
+        this.logger = logger;
     }
 
     protected final void saveEvent( final Throwable t, final String msg ) {
