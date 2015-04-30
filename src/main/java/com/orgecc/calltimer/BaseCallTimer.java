@@ -5,16 +5,25 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
-abstract class BaseCallTimer implements CallTimer {
+import org.slf4j.Logger;
+
+class BaseCallTimer implements CallTimer {
 
     static final String HEADER =
             "YYYY-MM-DD HH:mm:ss.sss\tlevel\tTBID\tms\tinsize\toutsize\touttype\tmethod\tclass";
 
     private static final String MSG_FORMAT = "%s\t%s\t%s\t%s\t%s\t%s";
 
+    private static Logger saveHeader( final Logger logger ) {
+        logger.warn( HEADER );
+        return logger;
+    }
+
     private static String normalizeOutMessage( final String s ) {
         return s.replace( '\t', ' ' );
     }
+
+    private long startNanos;
 
     private long startMillis;
 
@@ -30,7 +39,25 @@ abstract class BaseCallTimer implements CallTimer {
 
     private boolean callEnded;
 
-    protected abstract void saveEvent( Throwable t, String msg );
+    private final Ticker ticker;
+
+    private final Logger logger;
+
+    BaseCallTimer( final Ticker ticker, final Logger logger ) {
+        this.ticker = ticker;
+        this.logger = saveHeader( logger );
+    }
+
+    protected final void saveEvent( final Throwable t, final String msg ) {
+
+        if ( t == null ) {
+            this.logger.info( msg );
+            return;
+        }
+
+        this.logger.error( msg );
+
+    }
 
     public CallTimer callStart() {
         return callStart( 0 );
@@ -41,6 +68,7 @@ abstract class BaseCallTimer implements CallTimer {
     }
 
     public CallTimer callStart( final long inputSize ) {
+        this.startNanos = this.ticker.read();
         this.startMillis = System.currentTimeMillis();
         this.inputSize = inputSize;
         this.outputSize = null;
@@ -102,7 +130,7 @@ abstract class BaseCallTimer implements CallTimer {
 
     public void callEnd( final Throwable t ) {
 
-        final long durationInMillis = System.currentTimeMillis() - this.startMillis;
+        final long durationInMillis = ( this.ticker.read() - this.startNanos ) / 1000000;
 
         final String outputInfo;
 
