@@ -5,17 +5,14 @@ import org.slf4j.LoggerFactory;
 
 public final class CallTimerBuilder {
 
-    private static final class LazyCallTimerHolder {
-
-        static final Logger LOGGER = LoggerFactory.getLogger( CallTimer.class );
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger( CallTimer.class );
 
     private Ticker ticker;
 
     private Logger logger;
 
     public CallTimerBuilder() {
-        withTicker( Ticker.CPU ).withLogger( LazyCallTimerHolder.LOGGER );
+        withTicker( Ticker.CPU ).withLogger( LOGGER );
     }
 
     public CallTimerBuilder withTicker( final Ticker ticker ) {

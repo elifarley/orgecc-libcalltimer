@@ -172,9 +172,10 @@ class BaseCallTimer implements CallTimer {
 
     @Override
     public String toString() {
-        final String format = "%s [%s %s.%s inputSize=%s, outputSize=%s, output=%s, callEnded=%s]";
-        return String.format( format, this.getClass().getSimpleName(),
-                new Date( this.startMillis ), this.className, this.methodName, this.inputSize,
+        final String format =
+                "%s:%s [%s %s.%s inputSize=%s, outputSize=%s, output=%s, callEnded=%s]";
+        return String.format( format, this.getClass().getSimpleName(), this.ticker, new Date(
+                this.startMillis ), this.className, this.methodName, this.inputSize,
                 this.outputSize, this.output, this.callEnded );
     }
 

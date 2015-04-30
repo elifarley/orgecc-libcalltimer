@@ -16,12 +16,18 @@ public abstract class Ticker {
         }
     }
 
-    public static final Ticker SYSTEM = new Ticker() {
+    public static final Ticker WALL_CLOCK = new Ticker() {
 
         @Override
         public long read() {
             return System.nanoTime();
         };
+
+        @Override
+        public String toString() {
+            return "Ticker.WALL_CLOCK";
+        }
+
     };
 
     public static final Ticker CPU = new Ticker() {
@@ -30,6 +36,12 @@ public abstract class Ticker {
         public long read() {
             return LazyThreadMXBeanHolder.TMXB.getCurrentThreadCpuTime();
         };
+
+        @Override
+        public String toString() {
+            return "Ticker.CPU";
+        }
+
     };
 
     public abstract long read();
