@@ -2,7 +2,7 @@
 
 Usage example:
 ```Java
-CallTimer timer = CallTimerFactory.newSLF4JCallTimer().callStart();
+CallTimer timer = new CallTimerBuilder().withTicker( Ticker.CPU ).build().callStart();
 
 // [...find out className, methodName and paramCount...]
 
@@ -34,7 +34,7 @@ Sample log4j configuration for JBoss:
 
 [...]
 
-<category name="com.orgecc.lib.CallTimer" additivity="false">
+<category name="com.orgecc.calltimer.CallTimer" additivity="false">
   <appender-ref ref="call-timer"/>
   <priority value="DEBUG" />
 </category>
