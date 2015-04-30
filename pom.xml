@@ -11,7 +11,7 @@
     <version>default-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.orgecc.lib</groupId>
+  <groupId>com.orgecc.calltimer</groupId>
   <artifactId>orgecc-libcalltimer</artifactId>
   <version>default-SNAPSHOT</version>
   <name>[libct] Call Timer</name>
