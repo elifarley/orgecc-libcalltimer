@@ -35,7 +35,7 @@ Sample log4j configuration for JBoss:
 [...]
 
 <category name="com.orgecc.calltimer.CallTimer" additivity="false">
-  <appender-ref ref="call-timer"/>
   <priority value="DEBUG" />
+  <appender-ref ref="call-timer"/>
 </category>
 ```
