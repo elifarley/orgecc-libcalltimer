@@ -14,13 +14,38 @@ class BaseCallTimer implements CallTimer {
 
     private static final String MSG_FORMAT = "%s\t%s\t%s\t%s\t%s\t%s";
 
+    private static final String TO_STRING_FORMAT =
+            "%s:%s [%s %s.%s inputSize=%s, outputSize=%s, output=%s, callEnded=%s]";
+
     static Logger saveHeader( final Logger logger ) {
         logger.warn( HEADER );
         return logger;
     }
 
-    private static String normalizeOutMessage( final String s ) {
+    static String normalizeOutMessage( final String s ) {
         return s.replace( '\t', ' ' );
+    }
+
+    @SuppressWarnings( "rawtypes" )
+    private static Integer getSize( final Object output ) {
+
+        if ( output instanceof String ) {
+            return ( (String) output ).length();
+        }
+
+        if ( output instanceof Collection ) {
+            return ( (Collection) output ).size();
+        }
+
+        if ( output instanceof Map ) {
+            return ( (Map) output ).size();
+        }
+
+        if ( output.getClass().isArray() ) {
+            return Array.getLength( output );
+        }
+
+        return null;
     }
 
     private long startNanos;
@@ -48,7 +73,7 @@ class BaseCallTimer implements CallTimer {
         this.logger = logger;
     }
 
-    protected final void saveEvent( final Throwable t, final String msg ) {
+    void saveEvent( final Throwable t, final String msg ) {
 
         if ( t == null ) {
             this.logger.info( msg );
@@ -59,15 +84,15 @@ class BaseCallTimer implements CallTimer {
 
     }
 
-    public CallTimer callStart() {
+    public final CallTimer callStart() {
         return callStart( 0 );
     }
 
-    public CallTimer callStart( final byte[] b ) {
+    public final CallTimer callStart( final byte[] b ) {
         return callStart( b == null ? 0 : b.length );
     }
 
-    public CallTimer callStart( final long inputSize ) {
+    public final CallTimer callStart( final long inputSize ) {
         this.startNanos = this.ticker.read();
         this.startMillis = System.currentTimeMillis();
         this.inputSize = inputSize;
@@ -77,23 +102,23 @@ class BaseCallTimer implements CallTimer {
         return setCallName( null, null );
     }
 
-    public CallTimer setCallName( final String className, final String methodName,
+    public final CallTimer setCallName( final String className, final String methodName,
             final int paramCount ) {
         return setCallName( className, methodName + "#" + paramCount );
     }
 
-    public CallTimer setCallName( final String className, final String methodName ) {
+    public final CallTimer setCallName( final String className, final String methodName ) {
         this.className = className == null ? "-" : className.replace( ' ', '-' );
         this.methodName = methodName == null ? "-" : methodName.replace( ' ', '-' );
         return this;
     }
 
-    public CallTimer setInputSize( final long inputSize ) {
+    public final CallTimer setInputSize( final long inputSize ) {
         this.inputSize = inputSize;
         return this;
     }
 
-    public CallTimer setOutputSize( final long outputSize ) {
+    public final CallTimer setOutputSize( final long outputSize ) {
         this.outputSize = Long.toString( outputSize );
         return this;
     }
@@ -113,11 +138,13 @@ class BaseCallTimer implements CallTimer {
                 return "NULL";
             }
 
-            // this.outputSize != null
+            assert this.outputSize != null;
             // = method returned a serialized representation of the result class
             return "SER";
 
         }
+
+        assert this.output != null;
 
         final String result = normalizeOutMessage( this.output.getClass().getName() );
 
@@ -128,9 +155,17 @@ class BaseCallTimer implements CallTimer {
 
     }
 
+    final long durationInMillis() {
+        return ( this.ticker.read() - this.startNanos ) / 1000000;
+    }
+
     public void callEnd( final Throwable t ) {
 
-        final long durationInMillis = ( this.ticker.read() - this.startNanos ) / 1000000;
+        final long durationInMillis = durationInMillis();
+
+        if ( this.callEnded ) {
+            return;
+        }
 
         final String outputInfo;
 
@@ -154,59 +189,35 @@ class BaseCallTimer implements CallTimer {
 
     }
 
-    public void callEnd() {
+    public final void callEnd() {
         callEnd( (Throwable) null );
     }
 
-    public void callEnd( final byte[] output ) {
+    public final void callEnd( final byte[] output ) {
         callEnd( output == null ? 0 : output.length );
     }
 
-    public void callEnd( final long outputSize ) {
+    public final void callEnd( final long outputSize ) {
         setOutputSize( outputSize ).callEnd();
     }
 
-    public void callEnd( final Object output ) {
+    public final void callEnd( final Object output ) {
         setOutput( output ).callEnd();
     }
 
     @Override
     public String toString() {
-        final String format =
-                "%s:%s [%s %s.%s inputSize=%s, outputSize=%s, output=%s, callEnded=%s]";
-        return String.format( format, this.getClass().getSimpleName(), this.ticker, new Date(
-                this.startMillis ), this.className, this.methodName, this.inputSize,
+        return String.format( TO_STRING_FORMAT, this.getClass().getSimpleName(), this.ticker,
+                new Date( this.startMillis ), this.className, this.methodName, this.inputSize,
                 this.outputSize, this.output, this.callEnded );
     }
 
     @Override
-    protected void finalize() throws Throwable {
+    protected final void finalize() throws Throwable {
         if ( !this.callEnded ) {
             callEnd( new Throwable( "CALL NOT ENDED" ) );
         }
         super.finalize();
-    }
-
-    @SuppressWarnings( "rawtypes" )
-    private static Integer getSize( final Object output ) {
-
-        if ( output instanceof String ) {
-            return ( (String) output ).length();
-        }
-
-        if ( output instanceof Collection ) {
-            return ( (Collection) output ).size();
-        }
-
-        if ( output instanceof Map ) {
-            return ( (Map) output ).size();
-        }
-
-        if ( output.getClass().isArray() ) {
-            return Array.getLength( output );
-        }
-
-        return null;
     }
 
 }
