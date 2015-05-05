@@ -48,25 +48,25 @@ class BaseCallTimer implements CallTimer {
         return null;
     }
 
-    private long startNanos;
+    long startNanos;
 
-    private long startMillis;
+    long startMillis;
 
-    private String className;
+    String className;
 
-    private String methodName;
+    String methodName;
 
-    private long inputSize;
+    long inputSize;
 
     private String outputSize;
 
     private Object output;
 
-    private boolean callEnded;
+    boolean callEnded;
 
-    private final Ticker ticker;
+    final Ticker ticker;
 
-    private final Logger logger;
+    final Logger logger;
 
     BaseCallTimer( final Ticker ticker, final Logger logger ) {
         this.ticker = ticker;

@@ -30,7 +30,8 @@ public final class CallTimerBuilder {
     }
 
     public CallTimer build() {
-        return new BaseCallTimer( this.ticker, this.logger );
+        return !this.logger.isInfoEnabled() ? new ErrorOnlyCallTimer( this.ticker, this.logger )
+        : new BaseCallTimer( this.ticker, this.logger );
     }
 
 }
