@@ -12,10 +12,15 @@
   </parent>
 
   <groupId>com.orgecc.calltimer</groupId>
-  <artifactId>orgecc-libcalltimer</artifactId>
+  <artifactId>orgecc-libcalltimer-root</artifactId>
   <version>default-SNAPSHOT</version>
-  <name>[libct] Call Timer</name>
+  <packaging>pom</packaging>
+  <name>[libct] Call Timer Root</name>
 
+  <modules>
+    <module>lib</module>
+  </modules>
+ 
   <dependencyManagement>
     <dependencies>
 
