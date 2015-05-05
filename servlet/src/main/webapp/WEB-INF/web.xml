@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4">
+
+  <!--
+    In order to register the listener and the filter to all web apps,
+    please edit $JBOSS_HOME/server/default/deploy/jboss-web.deployer/conf/web.xml
+   -->
+
+  <display-name>Call Timer</display-name>
+  <description></description>
+
+  <listener>
+    <listener-class>com.orgecc.calltimer.servlet.CallTimerListener</listener-class>
+  </listener>
+
+  <filter>
+    <filter-name>call-timer-filter</filter-name>
+    <filter-class>com.orgecc.calltimer.servlet.CallTimerFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>call-timer-filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+</web-app>
+
