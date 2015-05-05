@@ -16,6 +16,20 @@ public abstract class Ticker {
         }
     }
 
+    public static final Ticker NO_OP = new Ticker() {
+
+        @Override
+        public long read() {
+            return 0;
+        };
+
+        @Override
+        public String toString() {
+            return "Ticker.NO_OP";
+        }
+
+    };
+
     public static final Ticker WALL_CLOCK = new Ticker() {
 
         @Override
