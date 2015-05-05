@@ -1,6 +1,8 @@
 package com.orgecc.calltimer;
 
-public interface CallTimer {
+import java.io.Serializable;
+
+public interface CallTimer extends Serializable {
 
     CallTimer callStart();
 

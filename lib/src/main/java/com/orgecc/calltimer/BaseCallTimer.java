@@ -60,13 +60,13 @@ class BaseCallTimer implements CallTimer {
 
     private String outputSize;
 
-    private Object output;
+    private String output;
 
     boolean callEnded;
 
-    final Ticker ticker;
+    final transient Ticker ticker;
 
-    final Logger logger;
+    final transient Logger logger;
 
     BaseCallTimer( final Ticker ticker, final Logger logger ) {
         this.ticker = ticker;
@@ -124,7 +124,7 @@ class BaseCallTimer implements CallTimer {
     }
 
     private CallTimer setOutput( final Object output ) {
-        this.output = output;
+        this.output = output == null ? null : output.getClass().getName();
         return this;
 
     }
@@ -146,7 +146,7 @@ class BaseCallTimer implements CallTimer {
 
         assert this.output != null;
 
-        final String result = normalizeOutMessage( this.output.getClass().getName() );
+        final String result = normalizeOutMessage( this.output );
 
         final Integer size = getSize( result );
         this.outputSize = size == null ? "?" : size.toString();
