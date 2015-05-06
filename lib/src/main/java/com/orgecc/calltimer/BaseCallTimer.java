@@ -17,13 +17,16 @@ class BaseCallTimer implements CallTimer {
     private static final String TO_STRING_FORMAT =
             "%s:%s [%s %s.%s inputSize=%s, outputSize=%s, output=%s, callEnded=%s]";
 
+    private static final String TYPE_PREFIX_TO_OMIT = "java.lang.";
+
     static Logger saveHeader( final Logger logger ) {
         logger.warn( HEADER );
         return logger;
     }
 
     static String normalizeOutMessage( final String s ) {
-        return s.replace( '\t', ' ' );
+        return ( s.startsWith( TYPE_PREFIX_TO_OMIT ) ? s.substring( TYPE_PREFIX_TO_OMIT.length() )
+                : s ).replace( '\t', ' ' );
     }
 
     @SuppressWarnings( "rawtypes" )
