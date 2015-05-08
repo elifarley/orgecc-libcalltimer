@@ -16,12 +16,12 @@ public final class ErrorOnlyCallTimer extends BaseCallTimer {
     }
 
     @Override
-    protected final void saveEvent( final Throwable t, final String msg ) {
+    protected void saveEvent( final Throwable throwable, final String msg ) {
         // Inlined; not used
     }
 
     @Override
-    public final void callEnd( final Throwable t ) {
+    public void callEnd( final Throwable throwable ) {
 
         final long durationInMillis = durationInMillis();
 
@@ -31,11 +31,11 @@ public final class ErrorOnlyCallTimer extends BaseCallTimer {
 
         this.callEnded = true;
 
-        if ( t == null ) {
+        if ( throwable == null ) {
             return;
         }
 
-        final String outputInfo = "** " + normalizeOutMessage( t.toString() ) + " **";
+        final String outputInfo = "** " + normalizeOutMessage( throwable.toString() ) + " **";
 
         final String msg =
                 String.format( MSG_FORMAT, durationInMillis, this.inputSize, outputInfo,
@@ -46,7 +46,7 @@ public final class ErrorOnlyCallTimer extends BaseCallTimer {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return String.format( TO_STRING_FORMAT, this.getClass().getSimpleName(), this.ticker,
                 new Date( this.startMillis ), this.className, this.methodName, this.inputSize,
                 this.callEnded );

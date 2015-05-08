@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 
 class BaseCallTimer implements CallTimer {
 
-    static final String HEADER =
+    private static final String HEADER =
             "YYYY-MM-DD HH:mm:ss.sss\tlevel\tTBID\tms\tinsize\toutsize\touttype\tmethod\tclass";
 
     private static final String MSG_FORMAT = "%s\t%s\t%s\t%s\t%s\t%s";
@@ -24,9 +24,9 @@ class BaseCallTimer implements CallTimer {
         return logger;
     }
 
-    static String normalizeOutMessage( final String s ) {
-        return ( s.startsWith( TYPE_PREFIX_TO_OMIT ) ? s.substring( TYPE_PREFIX_TO_OMIT.length() )
-                : s ).replace( '\t', ' ' );
+    static String normalizeOutMessage( final String str ) {
+        return ( str.startsWith( TYPE_PREFIX_TO_OMIT ) ? str.substring( TYPE_PREFIX_TO_OMIT
+                .length() ) : str ).replace( '\t', ' ' );
     }
 
     @SuppressWarnings( "rawtypes" )
@@ -76,9 +76,9 @@ class BaseCallTimer implements CallTimer {
         this.logger = logger;
     }
 
-    void saveEvent( final Throwable t, final String msg ) {
+    void saveEvent( final Throwable throwable, final String msg ) {
 
-        if ( t == null ) {
+        if ( throwable == null ) {
             this.logger.info( msg );
             return;
         }
@@ -91,8 +91,8 @@ class BaseCallTimer implements CallTimer {
         return callStart( 0 );
     }
 
-    public final CallTimer callStart( final byte[] b ) {
-        return callStart( b == null ? 0 : b.length );
+    public final CallTimer callStart( final byte[] bytes ) {
+        return callStart( bytes == null ? 0 : bytes.length );
     }
 
     public final CallTimer callStart( final long inputSize ) {
@@ -162,7 +162,7 @@ class BaseCallTimer implements CallTimer {
         return ( this.ticker.read() - this.startNanos ) / 1000000;
     }
 
-    public void callEnd( final Throwable t ) {
+    public void callEnd( final Throwable throwable ) {
 
         final long durationInMillis = durationInMillis();
 
@@ -172,11 +172,11 @@ class BaseCallTimer implements CallTimer {
 
         final String outputInfo;
 
-        if ( t == null ) {
+        if ( throwable == null ) {
             outputInfo = normalizeOutputAndSize();
 
         } else {
-            outputInfo = "** " + normalizeOutMessage( t.toString() ) + " **";
+            outputInfo = "** " + normalizeOutMessage( throwable.toString() ) + " **";
             this.outputSize = "E";
 
         }
@@ -186,7 +186,7 @@ class BaseCallTimer implements CallTimer {
                 String.format( MSG_FORMAT, durationInMillis, this.inputSize, this.outputSize,
                         outputInfo, this.methodName, this.className );
 
-        saveEvent( t, msg );
+        saveEvent( throwable, msg );
 
         this.callEnded = true;
 

@@ -6,7 +6,7 @@ public interface CallTimer extends Serializable {
 
     CallTimer callStart();
 
-    CallTimer callStart( byte[] b );
+    CallTimer callStart( byte[] bytes );
 
     CallTimer callStart( long inputSize );
 
@@ -26,6 +26,6 @@ public interface CallTimer extends Serializable {
 
     void callEnd( Object output );
 
-    void callEnd( Throwable t );
+    void callEnd( Throwable throwable );
 
 }

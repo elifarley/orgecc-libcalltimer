@@ -9,12 +9,12 @@ public final class NoOpCallTimer extends BaseCallTimer {
     }
 
     @Override
-    protected final void saveEvent( final Throwable t, final String msg ) {
+    protected void saveEvent( final Throwable throwable, final String msg ) {
         // not used
     }
 
     @Override
-    public final void callEnd( final Throwable t ) {
+    public void callEnd( final Throwable throwable ) {
         this.callEnded = true;
     }
 
