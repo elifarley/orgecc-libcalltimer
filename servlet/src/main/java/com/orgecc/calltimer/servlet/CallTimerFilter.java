@@ -40,16 +40,17 @@ public class CallTimerFilter implements Filter {
             final HttpServletRequest httpReq =
                     request instanceof HttpServletRequest ? (HttpServletRequest) request : null;
 
+            final String remoteAddr = request.getRemoteAddr();
+
             if ( httpReq == null ) {
-                callTimer.setCallName( request.getRemoteHost(), "-" );
+                callTimer.setCallName( remoteAddr, "-" );
 
             } else {
                 String queryString = httpReq.getQueryString();
                 queryString =
                         queryString == null ? "-" : String
                                         .valueOf( queryString.split( "&" ).length );
-                callTimer.setCallName( queryString == null ? "-" : queryString,
-                                httpReq.getRequestURI() );
+                callTimer.setCallName( remoteAddr + ":" + queryString, httpReq.getRequestURI() );
 
             }
 
@@ -61,6 +62,7 @@ public class CallTimerFilter implements Filter {
 
             }
 
+            callTimer.setThreadDetails();
             chain.doFilter( request, response );
 
         } catch ( final Exception e ) {

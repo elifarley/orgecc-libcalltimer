@@ -23,14 +23,14 @@ public class CallTimerListener implements ServletContextListener, HttpSessionLis
 
     private static CallTimer newCallTimer( final String className, final String methodName ) {
         return new CallTimerBuilder().withTicker( Ticker.WALL_CLOCK ).withLogger( LOGGER ).build()
-                .callStart().setCallName( className, methodName );
+                .callStart().setCallName( className, methodName ).setThreadDetails();
     }
 
     @Override
     public void contextInitialized( final ServletContextEvent sce ) {
 
         sce.getServletContext().setAttribute( CONTEXT_CALL_TIMER,
-                newCallTimer( "CONTEXT-CREATED", sce.getServletContext().getContextPath() ) );
+                newCallTimer( "CONTEXT", sce.getServletContext().getContextPath() ) );
 
     }
 
@@ -54,7 +54,7 @@ public class CallTimerListener implements ServletContextListener, HttpSessionLis
     public void sessionCreated( final HttpSessionEvent hse ) {
 
         hse.getSession().setAttribute( SESSION_CALL_TIMER,
-                newCallTimer( "SESSION-CREATED", "#" + hse.getSession().getId() ) );
+                newCallTimer( "SESSION", hse.getSession().getId() ) );
 
     }
 
@@ -70,9 +70,11 @@ public class CallTimerListener implements ServletContextListener, HttpSessionLis
             return;
         }
 
+        assert callTimer == null;
+
         final String sessionID = session == null ? "NULL" : session.getId();
 
-        newCallTimer( "SESSION-ERROR", "#" + sessionID ).callEnd(
+        newCallTimer( "SESSION-ERROR", sessionID ).callEnd(
                 new RuntimeException( "Missing call timer for session" ) );
 
     }
