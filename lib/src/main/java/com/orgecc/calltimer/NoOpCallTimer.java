@@ -16,6 +16,7 @@ public final class NoOpCallTimer extends BaseCallTimer {
     @Override
     public void callEnd( final Throwable throwable ) {
         this.callEnded = true;
+        restoreThreadName();
     }
 
 }

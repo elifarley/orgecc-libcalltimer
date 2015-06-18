@@ -18,6 +18,10 @@ public interface CallTimer extends Serializable {
 
     CallTimer setOutputSize( long outputSize );
 
+    CallTimer setThreadDetails();
+
+    CallTimer setThreadDetails( String extraDetails );
+
     void callEnd();
 
     void callEnd( byte[] output );

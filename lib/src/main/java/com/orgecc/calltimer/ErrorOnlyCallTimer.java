@@ -42,6 +42,7 @@ public final class ErrorOnlyCallTimer extends BaseCallTimer {
                         this.methodName, this.className );
 
         this.logger.error( msg );
+        restoreThreadName();
 
     }
 

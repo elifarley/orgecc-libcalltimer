@@ -17,7 +17,11 @@ class BaseCallTimer implements CallTimer {
     private static final String TO_STRING_FORMAT =
             "%s:%s [%s %s.%s inputSize=%s, outputSize=%s, output=%s, callEnded=%s]";
 
+    private static final String THREAD_NAME_FORMAT = "%s(%s.%s%s) %s [%s]";
+
     private static final String TYPE_PREFIX_TO_OMIT = "java.lang.";
+
+    private static final int NO_THREAD = -1;
 
     static Logger saveHeader( final Logger logger ) {
         logger.warn( HEADER );
@@ -70,6 +74,10 @@ class BaseCallTimer implements CallTimer {
     final transient Ticker ticker;
 
     final transient Logger logger;
+
+    private transient long originalThreadId = NO_THREAD;
+
+    private transient String originalThreadName;
 
     BaseCallTimer( final Ticker ticker, final Logger logger ) {
         this.ticker = ticker;
@@ -124,6 +132,37 @@ class BaseCallTimer implements CallTimer {
     public final CallTimer setOutputSize( final long outputSize ) {
         this.outputSize = Long.toString( outputSize );
         return this;
+    }
+
+    public final CallTimer setThreadDetails() {
+        return setThreadDetails( null );
+    }
+
+    public final CallTimer setThreadDetails( final String extraDetails ) {
+
+        final Thread currentThread = Thread.currentThread();
+        if ( NO_THREAD == this.originalThreadId ) {
+            this.originalThreadId = currentThread.getId();
+            this.originalThreadName = currentThread.getName();
+
+        } else if ( this.originalThreadId != currentThread.getId() ) {
+            this.logger.error( String.format( "Expected thread ID: %s; name: %s; details: '%s'",
+                    this.originalThreadId, this.originalThreadName, extraDetails ) );
+        }
+
+        assert currentThread.getId() == this.originalThreadId : String.format(
+                "Thread ID mismatch: expected '%s'; actual '%s'", this.originalThreadId,
+                currentThread.getId() );
+
+        final String name =
+                String.format( THREAD_NAME_FORMAT, extraDetails == null ? "" : extraDetails + "; ",
+                        this.className, this.methodName,
+                        this.inputSize == 0 ? "" : ":" + String.valueOf( this.inputSize ),
+                                new Date( this.startMillis ), this.originalThreadName );
+
+        Thread.currentThread().setName( name );
+        return this;
+
     }
 
     private CallTimer setOutput( final Object output ) {
@@ -189,7 +228,27 @@ class BaseCallTimer implements CallTimer {
         saveEvent( throwable, msg );
 
         this.callEnded = true;
+        restoreThreadName();
 
+    }
+
+    protected final void restoreThreadName() {
+
+        if ( NO_THREAD == this.originalThreadId ) {
+            // Method 'setThreadDetails' hasn't been called
+            return;
+        }
+
+        final Thread currentThread = Thread.currentThread();
+        if ( currentThread.getId() == this.originalThreadId ) {
+            currentThread.setName( this.originalThreadName );
+            this.originalThreadId = NO_THREAD;
+            this.originalThreadName = null;
+            return;
+        }
+
+        this.logger.error( String.format( "Expected thread ID: %s; actual: %s; original name: %s",
+                this.originalThreadId, currentThread.getId(), this.originalThreadName ) );
     }
 
     public final void callEnd() {
