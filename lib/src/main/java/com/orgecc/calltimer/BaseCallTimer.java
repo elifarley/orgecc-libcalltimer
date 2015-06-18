@@ -67,7 +67,7 @@ class BaseCallTimer implements CallTimer {
 
     private String outputSize;
 
-    private String output;
+    private Object output;
 
     boolean callEnded;
 
@@ -166,7 +166,7 @@ class BaseCallTimer implements CallTimer {
     }
 
     private CallTimer setOutput( final Object output ) {
-        this.output = output == null ? null : output.getClass().getName();
+        this.output = output;
         return this;
 
     }
@@ -188,9 +188,9 @@ class BaseCallTimer implements CallTimer {
 
         assert this.output != null;
 
-        final String result = normalizeOutMessage( this.output );
+        final String result = normalizeOutMessage( this.output.getClass().getName() );
 
-        final Integer size = getSize( result );
+        final Integer size = getSize( this.output );
         this.outputSize = size == null ? "?" : size.toString();
 
         return result;
