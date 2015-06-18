@@ -31,11 +31,11 @@ public final class CallTimerBuilder {
 
     public CallTimer build() {
 
-        if ( this.logger.isInfoEnabled() ) {
+        if ( this.logger != null && this.logger.isInfoEnabled() ) {
             return new BaseCallTimer( this.ticker, this.logger );
         }
 
-        if ( this.logger.isErrorEnabled() ) {
+        if ( this.logger != null && this.logger.isErrorEnabled() ) {
             return new ErrorOnlyCallTimer( this.ticker, this.logger );
         }
 
