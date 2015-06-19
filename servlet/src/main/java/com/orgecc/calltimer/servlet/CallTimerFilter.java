@@ -33,37 +33,40 @@ public class CallTimerFilter implements Filter {
 
         final CallTimer callTimer =
                 new CallTimerBuilder().withTicker( Ticker.CPU ).withLogger( LOGGER ).build()
-                        .callStart().setInputSize( request.getContentLength() );
+                .callStart().setInputSize( request.getContentLength() );
 
         try {
 
             final HttpServletRequest httpReq =
                     request instanceof HttpServletRequest ? (HttpServletRequest) request : null;
 
-            final String remoteAddr = request.getRemoteAddr();
+                    String remoteAddr = request.getRemoteAddr();
+                    if ( "::1".equals( remoteAddr ) ) {
+                        remoteAddr = "local";
+                    }
 
-            if ( httpReq == null ) {
-                callTimer.setCallName( remoteAddr, "-" );
+                    if ( httpReq == null ) {
+                        callTimer.setCallName( remoteAddr, "-" );
 
-            } else {
-                String queryString = httpReq.getQueryString();
-                queryString =
-                        queryString == null ? "-" : String
-                                        .valueOf( queryString.split( "&" ).length );
-                callTimer.setCallName( remoteAddr + ":" + queryString, httpReq.getRequestURI() );
+                    } else {
+                        String queryString = httpReq.getQueryString();
+                        queryString =
+                                queryString == null ? "" : " #"
+                                + String.valueOf( queryString.split( "&" ).length );
+                        callTimer.setCallName( remoteAddr, httpReq.getRequestURI() + queryString );
 
-            }
+                    }
 
-            final HttpServletResponse httpRes =
-                    response instanceof HttpServletResponse ? (HttpServletResponse) response : null;
+                    final HttpServletResponse httpRes =
+                            response instanceof HttpServletResponse ? (HttpServletResponse) response : null;
 
-            if ( httpRes != null ) {
-                response = new com.orgecc.calltimer.servlet.HttpServletResponseWrapper( httpRes );
+                            if ( httpRes != null ) {
+                                response = new br.com.webb.calltimer.servlet.HttpServletResponseWrapper( httpRes );
 
-            }
+                            }
 
-            callTimer.setThreadDetails();
-            chain.doFilter( request, response );
+                            callTimer.setThreadDetails();
+                            chain.doFilter( request, response );
 
         } catch ( final Exception e ) {
             callTimer.callEnd( e );
