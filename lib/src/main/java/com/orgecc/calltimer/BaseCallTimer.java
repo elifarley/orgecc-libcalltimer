@@ -19,6 +19,11 @@ class BaseCallTimer implements CallTimer {
 
     private static final String THREAD_NAME_FORMAT = "%s(%s.%s%s) %s [%s]";
 
+    /**
+     * Month, day, hour, minute, second, millisecond, as in '1231-235959.999'.
+     */
+    private static final String DATE_TIME_FORMAT = "%1$tm%1$td-%1$tH%1$tM%1$tS.%1$TL";
+
     private static final String TYPE_PREFIX_TO_OMIT = "java.lang.";
 
     private static final int NO_THREAD = -1;
@@ -158,7 +163,8 @@ class BaseCallTimer implements CallTimer {
                 String.format( THREAD_NAME_FORMAT, extraDetails == null ? "" : extraDetails + "; ",
                         this.className, this.methodName,
                         this.inputSize == 0 ? "" : ":" + String.valueOf( this.inputSize ),
-                                new Date( this.startMillis ), this.originalThreadName );
+                                String.format( DATE_TIME_FORMAT, new Date( this.startMillis ) ),
+                        this.originalThreadName );
 
         Thread.currentThread().setName( name );
         return this;
