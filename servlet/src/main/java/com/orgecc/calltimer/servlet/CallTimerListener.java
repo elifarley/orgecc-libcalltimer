@@ -23,7 +23,7 @@ public class CallTimerListener implements ServletContextListener, HttpSessionLis
 
     private static CallTimer newCallTimer( final String className, final String methodName ) {
         return new CallTimerBuilder().withTicker( Ticker.WALL_CLOCK ).withLogger( LOGGER ).build()
-                .callStart().setCallName( className, methodName ).setThreadDetails();
+                .callStart().setCallName( className, methodName );
     }
 
     @Override
